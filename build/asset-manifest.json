@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a8c9308c.css",
+    "main.js": "/static/js/main.9eb1a491.js",
+    "static/js/453.40739c1e.chunk.js": "/static/js/453.40739c1e.chunk.js",
+    "static/media/wave.gif": "/static/media/wave.25d12b5cd2e2708287ee.gif",
+    "static/media/static_wave.png": "/static/media/static_wave.3a2ad83609298e7c6a25.png",
+    "static/media/Gen_Image_new.png": "/static/media/Gen_Image_new.e37308c50f35efadd3b8.png",
+    "static/media/Mask Group.png": "/static/media/Mask Group.9b25ea079f0c49446f64.png",
+    "static/media/Logo_New.png": "/static/media/Logo_New.744ac9f88f80a6188366.png",
+    "static/media/kva.png": "/static/media/kva.00a48497e034e3719950.png",
+    "static/media/power.png": "/static/media/power.e683750cfdc56005904a.png",
+    "static/media/frequency.png": "/static/media/frequency.2772311f486112738084.png",
+    "static/media/voltage.png": "/static/media/voltage.db823fd8488f2c365bab.png",
+    "static/media/current.png": "/static/media/current.badb1fbc6de50e91cc4c.png",
+    "static/media/Gen_Image.png": "/static/media/Gen_Image.dc15c00db02c0ef20def.png",
+    "index.html": "/index.html",
+    "main.a8c9308c.css.map": "/static/css/main.a8c9308c.css.map",
+    "main.9eb1a491.js.map": "/static/js/main.9eb1a491.js.map",
+    "453.40739c1e.chunk.js.map": "/static/js/453.40739c1e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a8c9308c.css",
+    "static/js/main.9eb1a491.js"
+  ]
+}
