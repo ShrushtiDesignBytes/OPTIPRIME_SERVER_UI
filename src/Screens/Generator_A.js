@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { Link, useParams } from "react-router-dom";
 import { CiUser } from "react-icons/ci";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { RiArrowDropDownLine } from "react-icons/ri"; 
-import Image_1 from "../assets/Image (1).png"; 
+import { RiArrowDropDownLine } from "react-icons/ri";
+import Image_1 from "../assets/Image (1).png";
 import Thermometer from "../assets/thermometer 1.png";
 import Featured_Icon from "../assets/Featured icon.png";
 import MaskGroup from "../assets/Mask Group.png";
@@ -22,8 +23,8 @@ import TriangleIcon from "../assets/Icon-triangle.png";
 import OrangeDot from "../assets/orange_dot.png";
 import Annotation from "../assets/annotation-info.png";
 import PhoneCall from "../assets/phone_call.png";
-import BreakerOpen from '../assets/breakeropen.png';
-import BreakerClose from '../assets/breakerclose.png';
+import BreakerOpen from "../assets/breakeropen.png";
+import BreakerClose from "../assets/breakerclose.png";
 
 const Generator_A = ({
   datas,
@@ -43,9 +44,8 @@ const Generator_A = ({
   closeDialog_A,
   closeStopDialog_A,
   closeSuccessDialog_A,
-  showErrorAlert_A
+  showErrorAlert_A,
 }) => {
-
   const [alertOpen, setAlertOpen] = useState(false);
   const [deviceInfoOpen, setDeviceInfoOpen] = useState(false);
 
@@ -264,40 +264,56 @@ const Generator_A = ({
 
           <div className="relative flex items-center justify-center">
             <div className="flex items-center justify-center gap-2">
-              <img src={Thermometer} alt="temp" className="w-5 h-5 xl:w-6 xl:h-6" />
+              <img
+                src={Thermometer}
+                alt="temp"
+                className="w-5 h-5 xl:w-6 xl:h-6"
+              />
               <h3 className="text-[#DDDDDD] ml-1 mr-5 whitespace-nowrap text-sm xl:text-base font-normal">
                 32°C
               </h3>
             </div>
 
-
             <div className="flex items-center justify-center">
               <div className="flex items-center justify-center gap-2">
-                <img src={Image_1} alt="battery" className="w-5 h-5 xl:w-6 xl:h-6" />
+                <img
+                  src={Image_1}
+                  alt="battery"
+                  className="w-5 h-5 xl:w-6 xl:h-6"
+                />
                 <h3 className="text-[#DDDDDD] ml-1 mr-5 whitespace-nowrap text-sm xl:text-base font-normal">
                   32%
                 </h3>
               </div>
             </div>
 
-            {isOn_A ? <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center gap-2">
-                <img src={BreakerClose} alt="battery" className="w-2 h-5 xl:w-3 xl:h-6" />
-                <h3 className="text-[#DDDDDD] ml-1 mr-5 whitespace-nowrap text-sm xl:text-base font-normal">
-                  Close
-                </h3>
-              </div>
-            </div>
-
-              : <div className="flex items-center justify-center">
+            {isOn_A ? (
+              <div className="flex items-center justify-center">
                 <div className="flex items-center justify-center gap-2">
-                  <img src={BreakerOpen} alt="battery" className="w-2 h-5 xl:w-3 xl:h-6" />
+                  <img
+                    src={BreakerClose}
+                    alt="battery"
+                    className="w-2 h-5 xl:w-3 xl:h-6"
+                  />
+                  <h3 className="text-[#DDDDDD] ml-1 mr-5 whitespace-nowrap text-sm xl:text-base font-normal">
+                    Close
+                  </h3>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center gap-2">
+                  <img
+                    src={BreakerOpen}
+                    alt="battery"
+                    className="w-2 h-5 xl:w-3 xl:h-6"
+                  />
                   <h3 className="text-[#DDDDDD] ml-1 mr-5 whitespace-nowrap text-sm xl:text-base font-normal">
                     Open
                   </h3>
                 </div>
-              </div>}
-
+              </div>
+            )}
 
             <div className="mt-1">
               {/* Cooldown indicator */}
@@ -306,7 +322,6 @@ const Generator_A = ({
                   Cooldown: {cooldownTimeLeft_A} minute(s) remaining
                 </div>
               )} */}
-
 
               {/* Warmup indicator */}
               {/* {isInWarmup_A && isOn_A && (
@@ -317,30 +332,33 @@ const Generator_A = ({
 
               {/* Toggle switch with disabled styling during cooldown or warmup */}
               <div
-                className={`w-14 h-7 rounded-full relative transition-all duration-300 ${isOn_A ? "bg-green-500" : "bg-gray-400"
-                  } ${(isInCooldown_A && !isOn_A) || (isInWarmup_A && isOn_A)
+                className={`w-14 h-7 rounded-full relative transition-all duration-300 ${
+                  isOn_A ? "bg-green-500" : "bg-gray-400"
+                } ${
+                  (isInCooldown_A && !isOn_A) || (isInWarmup_A && isOn_A)
                     ? "opacity-50 cursor-not-allowed"
                     : "cursor-pointer"
-                  }`}
+                }`}
                 onClick={
                   (isInCooldown_A && !isOn_A) || (isInWarmup_A && isOn_A)
                     ? () => {
-                      if (isInCooldown_A && !isOn_A) {
-                        showErrorAlert_A(
-                          `Genset 1 cannot be turned on yet. Please wait ${cooldownTimeLeft_A} more minutes.`
-                        );
-                      } else if (isInWarmup_A && isOn_A) {
-                        showErrorAlert_A(
-                          `Genset 1 cannot be turned off yet. Please wait ${warmupTimeLeft_A} more minutes.`
-                        );
+                        if (isInCooldown_A && !isOn_A) {
+                          showErrorAlert_A(
+                            `Genset 1 cannot be turned on yet. Please wait ${cooldownTimeLeft_A} more minutes.`
+                          );
+                        } else if (isInWarmup_A && isOn_A) {
+                          showErrorAlert_A(
+                            `Genset 1 cannot be turned off yet. Please wait ${warmupTimeLeft_A} more minutes.`
+                          );
+                        }
                       }
-                    }
                     : openDialog_A
                 }
               >
                 <div
-                  className={`w-7 h-7 bg-white rounded-full absolute top-0 transition-all duration-300 ${isOn_A ? "translate-x-7" : "translate-x-0"
-                    }`}
+                  className={`w-7 h-7 bg-white rounded-full absolute top-0 transition-all duration-300 ${
+                    isOn_A ? "translate-x-7" : "translate-x-0"
+                  }`}
                 ></div>
               </div>
 
@@ -368,7 +386,7 @@ const Generator_A = ({
                       className="text-white w-8 h-8"
                       onClick={closeDialog_A}
                     >
-                      x 
+                      x
                     </button>
                   </div>
                   <div className="flex my-5 gap-5 justify-center items-center">
@@ -544,8 +562,14 @@ const Generator_A = ({
           <div className="flex items-center p-4 mr-7 ">
             {/* Running Time */}
             <div className="flex flex-col items-start space-y-1 border-r border-[#204D4C] pr-10 pl-5">
-              <img src={Run_Time} alt="Running Time" className="w-5 h-5 xl:w-8 xl:h-8" />
-              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">Running Time</p>
+              <img
+                src={Run_Time}
+                alt="Running Time"
+                className="w-5 h-5 xl:w-8 xl:h-8"
+              />
+              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">
+                Running Time
+              </p>
               <p
                 className="text-[#DDDDDD] text-2xl xl:text-3xl font-semibold"
                 id="runningTimeGenset1"
@@ -556,8 +580,14 @@ const Generator_A = ({
 
             {/* Frequency */}
             <div className="flex flex-col items-start space-y-1 border-r border-[#204D4C] px-10">
-              <img src={Run_Frequency} alt="Frequency" className="w-5 h-5 xl:w-8 xl:h-8" />
-              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">Frequency</p>
+              <img
+                src={Run_Frequency}
+                alt="Frequency"
+                className="w-5 h-5 xl:w-8 xl:h-8"
+              />
+              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">
+                Frequency
+              </p>
               <p
                 className="text-[#DDDDDD] text-2xl xl:text-3xl font-semibold"
                 id="frequencyGenset1"
@@ -568,8 +598,14 @@ const Generator_A = ({
 
             {/* Engine RPM */}
             <div className="flex flex-col items-start space-y-1 border-r border-[#204D4C] px-10">
-              <img src={Run_Engine} alt="Engine RPM" className="w-5 h-5 xl:w-8 xl:h-8" />
-              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">Engine RPM</p>
+              <img
+                src={Run_Engine}
+                alt="Engine RPM"
+                className="w-5 h-5 xl:w-8 xl:h-8"
+              />
+              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">
+                Engine RPM
+              </p>
               <p
                 className="text-[#DDDDDD] text-2xl xl:text-3xl font-semibold"
                 id="engineRpmGenset1"
@@ -580,8 +616,14 @@ const Generator_A = ({
 
             {/* Coolant Temp */}
             <div className="flex flex-col items-start space-y-1 border-r border-[#204D4C] px-10">
-              <img src={Run_Coolant} alt="Coolant Temp" className="w-5 h-5 xl:w-8 xl:h-8" />
-              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">Coolant Temp</p>
+              <img
+                src={Run_Coolant}
+                alt="Coolant Temp"
+                className="w-5 h-5 xl:w-8 xl:h-8"
+              />
+              <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">
+                Coolant Temp
+              </p>
               <p
                 className="text-[#DDDDDD] text-2xl xl:text-3xl font-semibold"
                 id="coolantTempGenset1"
@@ -592,7 +634,11 @@ const Generator_A = ({
 
             {/* Lube Oil Pressure */}
             <div className="flex flex-col items-start space-y-1 px-10">
-              <img src={Run_Lube} alt="Lube Oil Pressure" className="w-5 h-5 xl:w-8 xl:h-8" />
+              <img
+                src={Run_Lube}
+                alt="Lube Oil Pressure"
+                className="w-5 h-5 xl:w-8 xl:h-8"
+              />
               <p className="text-[#C37C5A] text-sm xl:text-lg font-medium">
                 Lube Oil Pressure
               </p>
@@ -670,8 +716,9 @@ const Generator_A = ({
                 </h4>
               </div>
               <div
-                className={`transition-transform ${alertOpen ? "rotate-180" : ""
-                  } text-white`}
+                className={`transition-transform ${
+                  alertOpen ? "rotate-180" : ""
+                } text-white`}
               >
                 <RiArrowDropDownLine className="w-8 h-8" />
               </div>
@@ -687,7 +734,9 @@ const Generator_A = ({
                         Start alert
                       </p>
                     </div>
-                    <div className="text-[#DDDDDD] text-xs xl:text-sm">10:32 am</div>
+                    <div className="text-[#DDDDDD] text-xs xl:text-sm">
+                      10:32 am
+                    </div>
                   </div>
                   <p className="text-[#DDDDDD] text-sm xl:text-base mt-2 ml-4">
                     Optiprime started with 2 generator
@@ -702,7 +751,9 @@ const Generator_A = ({
                         Start alert
                       </p>
                     </div>
-                    <div className="text-[#DDDDDD] text-xs xl:text-sm">10:32 am</div>
+                    <div className="text-[#DDDDDD] text-xs xl:text-sm">
+                      10:32 am
+                    </div>
                   </div>
                   <p className="text-[#DDDDDD] text-sm xl:text-base mt-2 ml-4">
                     Optiprime started with 2 generator
@@ -717,7 +768,9 @@ const Generator_A = ({
                         Start alert
                       </p>
                     </div>
-                    <div className="text-[#DDDDDD] text-xs xl:text-sm">10:32 am</div>
+                    <div className="text-[#DDDDDD] text-xs xl:text-sm">
+                      10:32 am
+                    </div>
                   </div>
                   <p className="text-[#DDDDDD] text-sm xl:text-base mt-2 ml-4">
                     Optiprime started with 2 generator
@@ -732,7 +785,9 @@ const Generator_A = ({
                         Start alert
                       </p>
                     </div>
-                    <div className="text-[#DDDDDD] text-xs xl:text-sm">10:32 am</div>
+                    <div className="text-[#DDDDDD] text-xs xl:text-sm">
+                      10:32 am
+                    </div>
                   </div>
                   <p className="text-[#DDDDDD] text-sm xl:text-base mt-2 ml-4">
                     Optiprime started with 2 generator
@@ -747,7 +802,9 @@ const Generator_A = ({
                         Start alert
                       </p>
                     </div>
-                    <div className="text-[#DDDDDD] text-xs xl:text-sm">10:32 am</div>
+                    <div className="text-[#DDDDDD] text-xs xl:text-sm">
+                      10:32 am
+                    </div>
                   </div>
                   <p className="text-[#DDDDDD] text-sm xl:text-base mt-2 ml-4">
                     Optiprime started with 2 generator
@@ -771,8 +828,9 @@ const Generator_A = ({
                 </h4>
               </div>
               <div
-                className={`transition-transform ${deviceInfoOpen ? "rotate-180" : ""
-                  } text-white`}
+                className={`transition-transform ${
+                  deviceInfoOpen ? "rotate-180" : ""
+                } text-white`}
               >
                 <RiArrowDropDownLine className="w-8 h-8" />
               </div>
@@ -919,7 +977,9 @@ const Generator_A = ({
                 <p className="text-[#DDDDDD] font-normal text-sm xl:text-base opacity-50">
                   Email ID
                 </p>
-                <p className="font-medium text-sm xl:text-base">admin@kirloskar.com</p>
+                <p className="font-medium text-sm xl:text-base">
+                  admin@kirloskar.com
+                </p>
               </div>
             </div>
             <div className="flex flex-col justify-start gap-5 text-white">
@@ -927,7 +987,9 @@ const Generator_A = ({
                 <p className="text-[#DDDDDD] font-normal text-sm xl:text-base opacity-50">
                   Mobile Number
                 </p>
-                <p className="font-medium text-sm xl:text-base">+91 9923 45678</p>
+                <p className="font-medium text-sm xl:text-base">
+                  +91 9923 45678
+                </p>
               </div>
             </div>
           </div>

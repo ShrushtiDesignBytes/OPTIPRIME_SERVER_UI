@@ -5,20 +5,18 @@ import Sidebar from "./Components/Sidebar";
 import Navbar from "./Components/Navbar";
 import "./App.css";
 import HomePage from "./Screens/HomePage";
-import Generator_A from "./Screens/Generator_A";
-import Generator_B from "./Screens/Generator_B";
+import GeneratorA from "./Screens/Generator_A";
+import GeneratorB from "./Screens/Generator_B";
 import { useNavigate } from "react-router-dom";
 
 const App = () => {
   const navigate = useNavigate();
 
-  const BASEURL = "http://localhost:5070";
-  const SERVERURL = "https://optiprime.koelsmartenergy.com/opti";
+  const BASEURL = "https://optiprime.koelsmartenergy.com/opti";
 
   const [datas, setDatas] = useState(null);
   const [status, setStatus] = useState();
   const [id, setId] = useState(1);
-
 
   const [isOn_A, setIsOn_A] = useState(false);
   const [showDialog_A, setShowDialog_A] = useState(false);
@@ -32,7 +30,6 @@ const App = () => {
   const [warmupTimeLeft_A, setWarmupTimeLeft_A] = useState(0);
   // console.log(id);
 
-  
   const [isOn_B, setIsOn_B] = useState(false);
   const [showDialog_B, setShowDialog_B] = useState(false);
   const [showSuccessDialog_B, setShowSuccessDialog_B] = useState(false);
@@ -167,14 +164,12 @@ const App = () => {
       };
 
       // Perform both fetch requests in parallel
-      const [localResponse, serverResponse] = await Promise.all([
-        fetch(`${BASEURL}/status/${id}`, fetchOptions),
-        fetch(`${SERVERURL}/status/${id}`, fetchOptions).catch(
-          (serverError) => {
-            return { ok: false, error: serverError };
-          }
-        ),
-      ]);
+      const localResponse = await fetch(
+        `${BASEURL}/status/${id}`,
+        fetchOptions
+      ).catch((error) => {
+        return { ok: false, error: error };
+      });
 
       // Handle local response
       const localData = await localResponse.json();
@@ -192,18 +187,7 @@ const App = () => {
       }
       console.log("Local update data:", localData);
 
-      // Handle server response
-      if (serverResponse.ok) {
-        const serverData = await serverResponse.json();
-        console.log("Server update data:", serverData);
-      } else {
-        console.error(
-          "Server update failed:",
-          serverResponse.error || "Unknown error"
-        );
-      }
-
-      await fetchStatus();
+      fetchStatus();
       return true;
     } catch (error) {
       console.error("Error updating status:", error);
@@ -240,14 +224,12 @@ const App = () => {
       };
 
       // Perform both fetch requests in parallel
-      const [localResponse, serverResponse] = await Promise.all([
-        fetch(`${BASEURL}/status/${id}`, fetchOptions),
-        fetch(`${SERVERURL}/status/${id}`, fetchOptions).catch(
-          (serverError) => {
-            return { ok: false, error: serverError };
-          }
-        ),
-      ]);
+      const localResponse = await fetch(
+        `${BASEURL}/status/${id}`,
+        fetchOptions
+      ).catch((error) => {
+        return { ok: false, error: error };
+      });
 
       // Handle local response
       const localData = await localResponse.json();
@@ -265,18 +247,7 @@ const App = () => {
       }
       console.log("Local update data:", localData);
 
-      // Handle server response
-      if (serverResponse.ok) {
-        const serverData = await serverResponse.json();
-        console.log("Server update data:", serverData);
-      } else {
-        console.error(
-          "Server update failed:",
-          serverResponse.error || "Unknown error"
-        );
-      }
-
-      await fetchStatus();
+      fetchStatus();
       return true;
     } catch (error) {
       console.error("Error updating status:", error);
@@ -348,261 +319,234 @@ const App = () => {
     setShowDialog_A(true);
   };
 
+  useEffect(() => {
+    if (status) {
+      setIsOn_B(status.genset2Status);
 
-    useEffect(() => {
-      if (status) {
-        setIsOn_B(status.genset2Status);
-  
-        // Use cooldown information from backend
-        if (status.genset2Cooldown > 0) {
-          setIsInCooldown_B(true);
-          const timeLeft = Math.ceil(status.genset2Cooldown / 60000);
-          setCooldownTimeLeft_B(timeLeft);
-        } else {
-          setIsInCooldown_B(false);
-          setCooldownTimeLeft_B(0);
-        }
-  
-        // Handle warmup information
-        if (status.genset2Warmup > 0) {
-          setIsInWarmup_B(true);
-          const timeLeft = Math.ceil(status.genset2Warmup / 60000);
-          setWarmupTimeLeft_B(timeLeft);
-        } else {
-          setIsInWarmup_B(false);
-          setWarmupTimeLeft_B(0);
-        }
-      }
-    }, [status]);
-  
-    const showErrorAlert_B = (message) => {
-      setErrorMessage_B(message);
-      setErrorAlertOpen_B(true);
-      setTimeout(() => {
-        setErrorAlertOpen_B(false);
-      }, 5000);
-    };
-  
-    const fetchStatusLocal_B = async () => {
-      try {
-        const response = await fetch(`${BASEURL}/status/${id}`);
-        const status = await response.json();
-        return status;
-      } catch (error) {
-        //console.error("Error fetching status:", error);
-        showErrorAlert_B("Failed to fetch latest status.");
-        return null;
-      }
-    };
-  
-    const updateStatusON_B = async () => {
-      try {
-        const response = await fetch(`${BASEURL}/status/${id}`);
-        const latestStatus = await response.json();
-  
-        if (latestStatus.genset2Cooldown > 0) {
-          const timeLeft = Math.ceil(latestStatus.genset2Cooldown / 60000);
-          showErrorAlert_B(
-            `Genset 2 cannot be turned on yet. Please wait ${timeLeft} minutes.`
-          );
-          return false;
-        }
-  
-        const optimisticData = {
-          genset2Status: true,
-          genset12Status: true, // At least one genset is on, so genset12Status is true
-          flag: "HMI",
-        };
-  
-        console.log("Updating status to ON:", optimisticData);
-  
-        const fetchOptions = {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(optimisticData),
-        };
-  
-        // Perform both fetch requests in parallel
-        const [localResponse, serverResponse] = await Promise.all([
-          fetch(`${BASEURL}/status/${id}`, fetchOptions),
-          fetch(`${SERVERURL}/status/${id}`, fetchOptions).catch(
-            (serverError) => {
-              return { ok: false, error: serverError };
-            }
-          ),
-        ]);
-  
-        // Handle local response
-        const localData = await localResponse.json();
-        if (!localResponse.ok) {
-          if (
-            localData.message &&
-            (localData.source === "genset2" || localData.source === "genset12")
-          ) {
-            showErrorAlert_B(localData.message);
-            return false;
-          }
-          throw new Error(
-            `Local update failed: ${localData.message || "Unknown error"}`
-          );
-        }
-        console.log("Local update data:", localData);
-  
-        // Handle server response
-        if (serverResponse.ok) {
-          const serverData = await serverResponse.json();
-          console.log("Server update data:", serverData);
-        } else {
-          console.error(
-            "Server update failed:",
-            serverResponse.error || "Unknown error"
-          );
-        }
-  
-        await fetchStatus();
-        return true;
-      } catch (error) {
-        console.error("Error updating status:", error);
-        showErrorAlert_B(`Failed to turn on Generator B: ${error.message}`);
-        return false;
-      }
-    };
-  
-    const updateStatusOFF_B = async () => {
-      try {
-        const response = await fetch(`${BASEURL}/status/${id}`);
-        const latestStatus = await response.json();
-  
-        if (latestStatus.genset2Warmup > 0) {
-          const timeLeft = Math.ceil(latestStatus.genset2Warmup / 60000);
-          showErrorAlert_B(
-            `Genset 2 cannot be turned off yet. Please wait ${timeLeft} minutes.`
-          );
-          return false;
-        }
-  
-        const optimisticData = {
-          genset2Status: false,
-          genset12Status: latestStatus.genset1Status, // True if genset2 is on, false if both are off
-          flag: "HMI",
-        };
-  
-        console.log("Updating status to OFF:", optimisticData);
-  
-        const fetchOptions = {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(optimisticData),
-        };
-  
-        // Perform both fetch requests in parallel
-        const [localResponse, serverResponse] = await Promise.all([
-          fetch(`${BASEURL}/status/${id}`, fetchOptions),
-          fetch(`${SERVERURL}/status/${id}`, fetchOptions).catch(
-            (serverError) => {
-              return { ok: false, error: serverError };
-            }
-          ),
-        ]);
-  
-        // Handle local response
-        const localData = await localResponse.json();
-        if (!localResponse.ok) {
-          if (
-            localData.message &&
-            (localData.source === "genset2" || localData.source === "genset12")
-          ) {
-            showErrorAlert_B(localData.message);
-            return false;
-          }
-          throw new Error(
-            `Local update failed: ${localData.message || "Unknown error"}`
-          );
-        }
-        console.log("Local update data:", localData);
-  
-        // Handle server response
-        if (serverResponse.ok) {
-          const serverData = await serverResponse.json();
-          console.log("Server update data:", serverData);
-        } else {
-          console.error(
-            "Server update failed:",
-            serverResponse.error || "Unknown error"
-          );
-        }
-  
-        await fetchStatus();
-        return true;
-      } catch (error) {
-        console.error("Error updating status:", error);
-        showErrorAlert_B(`Failed to turn off Generator B: ${error.message}`);
-        return false;
-      }
-    };
-  
-    const toggleSwitch_B = async () => {
-      const newIsOn = !isOn_B;
-      setShowDialog_B(false);
-  
-      // Fetch the latest status before toggling
-      const latestStatus = await fetchStatusLocal_B();
-      if (!latestStatus) return;
-  
-      if (newIsOn) {
-        if (isInCooldown_B) {
-          showErrorAlert_B(
-            `Genset 2 cannot be turned on yet. Please wait ${cooldownTimeLeft_B} minutes.`
-          );
-          return;
-        }
-        const success = await updateStatusON_B();
-        if (success) {
-          setIsOn_B(true);
-          setShowSuccessDialog_B(true);
-        }
+      // Use cooldown information from backend
+      if (status.genset2Cooldown > 0) {
+        setIsInCooldown_B(true);
+        const timeLeft = Math.ceil(status.genset2Cooldown / 60000);
+        setCooldownTimeLeft_B(timeLeft);
       } else {
-        if (isInWarmup_B) {
-          showErrorAlert_B(
-            `Genset 2 cannot be turned off yet. Please wait ${warmupTimeLeft_B} minutes.`
-          );
-          return;
-        }
-        const success = await updateStatusOFF_B();
-        if (success) {
-          setIsOn_B(false);
-          setShowStopDialog_B(true);
-        }
+        setIsInCooldown_B(false);
+        setCooldownTimeLeft_B(0);
       }
-    };
-  
-    const closeDialog_B = () => {
-      setShowDialog_B(false);
-    };
-  
-    const closeSuccessDialog_B = () => {
-      setShowSuccessDialog_B(false);
-    };
-  
-    const closeStopDialog_B = () => {
-      setShowStopDialog_B(false);
-    };
-  
-    const openDialog_B = () => {
-      if (isInCooldown_B && !isOn_B) {
+
+      // Handle warmup information
+      if (status.genset2Warmup > 0) {
+        setIsInWarmup_B(true);
+        const timeLeft = Math.ceil(status.genset2Warmup / 60000);
+        setWarmupTimeLeft_B(timeLeft);
+      } else {
+        setIsInWarmup_B(false);
+        setWarmupTimeLeft_B(0);
+      }
+    }
+  }, [status]);
+
+  const showErrorAlert_B = (message) => {
+    setErrorMessage_B(message);
+    setErrorAlertOpen_B(true);
+    setTimeout(() => {
+      setErrorAlertOpen_B(false);
+    }, 5000);
+  };
+
+  const fetchStatusLocal_B = async () => {
+    try {
+      const response = await fetch(`${BASEURL}/status/${id}`);
+      const status = await response.json();
+      return status;
+    } catch (error) {
+      //console.error("Error fetching status:", error);
+      showErrorAlert_B("Failed to fetch latest status.");
+      return null;
+    }
+  };
+
+  const updateStatusON_B = async () => {
+    try {
+      const response = await fetch(`${BASEURL}/status/${id}`);
+      const latestStatus = await response.json();
+
+      if (latestStatus.genset2Cooldown > 0) {
+        const timeLeft = Math.ceil(latestStatus.genset2Cooldown / 60000);
         showErrorAlert_B(
-          `Genset 2 cannot be turned on yet. Please wait ${cooldownTimeLeft_B} more minutes.`
+          `Genset 2 cannot be turned on yet. Please wait ${timeLeft} minutes.`
+        );
+        return false;
+      }
+
+      const optimisticData = {
+        genset2Status: true,
+        genset12Status: true, // At least one genset is on, so genset12Status is true
+        flag: "HMI",
+      };
+
+      console.log("Updating status to ON:", optimisticData);
+
+      const fetchOptions = {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(optimisticData),
+      };
+
+      // Perform both fetch requests in parallel
+      const localResponse = await fetch(
+        `${BASEURL}/status/${id}`,
+        fetchOptions
+      ).catch((error) => {
+        return { ok: false, error: error };
+      });
+
+      // Handle local response
+      const localData = await localResponse.json();
+      if (!localResponse.ok) {
+        if (
+          localData.message &&
+          (localData.source === "genset2" || localData.source === "genset12")
+        ) {
+          showErrorAlert_B(localData.message);
+          return false;
+        }
+        throw new Error(
+          `Local update failed: ${localData.message || "Unknown error"}`
+        );
+      }
+      console.log("Local update data:", localData);
+
+      fetchStatus();
+      return true;
+    } catch (error) {
+      console.error("Error updating status:", error);
+      showErrorAlert_B(`Failed to turn on Generator B: ${error.message}`);
+      return false;
+    }
+  };
+
+  const updateStatusOFF_B = async () => {
+    try {
+      const response = await fetch(`${BASEURL}/status/${id}`);
+      const latestStatus = await response.json();
+
+      if (latestStatus.genset2Warmup > 0) {
+        const timeLeft = Math.ceil(latestStatus.genset2Warmup / 60000);
+        showErrorAlert_B(
+          `Genset 2 cannot be turned off yet. Please wait ${timeLeft} minutes.`
+        );
+        return false;
+      }
+
+      const optimisticData = {
+        genset2Status: false,
+        genset12Status: latestStatus.genset1Status, // True if genset2 is on, false if both are off
+        flag: "HMI",
+      };
+
+      console.log("Updating status to OFF:", optimisticData);
+
+      const fetchOptions = {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(optimisticData),
+      };
+
+      // Perform both fetch requests in parallel
+      const localResponse = await fetch(
+        `${BASEURL}/status/${id}`,
+        fetchOptions
+      ).catch((error) => {
+        return { ok: false, error: error };
+      });
+
+      // Handle local response
+      const localData = await localResponse.json();
+      if (!localResponse.ok) {
+        if (
+          localData.message &&
+          (localData.source === "genset2" || localData.source === "genset12")
+        ) {
+          showErrorAlert_B(localData.message);
+          return false;
+        }
+        throw new Error(
+          `Local update failed: ${localData.message || "Unknown error"}`
+        );
+      }
+      console.log("Local update data:", localData);
+
+      fetchStatus();
+      return true;
+    } catch (error) {
+      console.error("Error updating status:", error);
+      showErrorAlert_B(`Failed to turn off Generator B: ${error.message}`);
+      return false;
+    }
+  };
+
+  const toggleSwitch_B = async () => {
+    const newIsOn = !isOn_B;
+    setShowDialog_B(false);
+
+    // Fetch the latest status before toggling
+    const latestStatus = await fetchStatusLocal_B();
+    if (!latestStatus) return;
+
+    if (newIsOn) {
+      if (isInCooldown_B) {
+        showErrorAlert_B(
+          `Genset 2 cannot be turned on yet. Please wait ${cooldownTimeLeft_B} minutes.`
         );
         return;
       }
-      if (isInWarmup_B && isOn_B) {
+      const success = await updateStatusON_B();
+      if (success) {
+        setIsOn_B(true);
+        setShowSuccessDialog_B(true);
+      }
+    } else {
+      if (isInWarmup_B) {
         showErrorAlert_B(
-          `Genset 2 cannot be turned off yet. Please wait ${warmupTimeLeft_B} more minutes.`
+          `Genset 2 cannot be turned off yet. Please wait ${warmupTimeLeft_B} minutes.`
         );
         return;
       }
-      setShowDialog_B(true);
-    };
+      const success = await updateStatusOFF_B();
+      if (success) {
+        setIsOn_B(false);
+        setShowStopDialog_B(true);
+      }
+    }
+  };
+
+  const closeDialog_B = () => {
+    setShowDialog_B(false);
+  };
+
+  const closeSuccessDialog_B = () => {
+    setShowSuccessDialog_B(false);
+  };
+
+  const closeStopDialog_B = () => {
+    setShowStopDialog_B(false);
+  };
+
+  const openDialog_B = () => {
+    if (isInCooldown_B && !isOn_B) {
+      showErrorAlert_B(
+        `Genset 2 cannot be turned on yet. Please wait ${cooldownTimeLeft_B} more minutes.`
+      );
+      return;
+    }
+    if (isInWarmup_B && isOn_B) {
+      showErrorAlert_B(
+        `Genset 2 cannot be turned off yet. Please wait ${warmupTimeLeft_B} more minutes.`
+      );
+      return;
+    }
+    setShowDialog_B(true);
+  };
 
   return (
     <div className="flex h-screen custom-body overflow-hidden">
@@ -611,7 +555,6 @@ const App = () => {
         {/* <Navbar /> */}
         <div className="content flex-grow h-full">
           <Routes>
-
             <Route
               path="/:id"
               element={
@@ -619,7 +562,6 @@ const App = () => {
                   datas={datas}
                   BASEURL={BASEURL}
                   status={status}
-                  SERVERURL={SERVERURL}
                   setId={setId}
                   fetchStatus={fetchStatus}
                   isOn_A={isOn_A}
@@ -674,18 +616,16 @@ const App = () => {
                   closeSuccessDialog_B={closeSuccessDialog_B}
                   closeStopDialog_B={closeStopDialog_B}
                   showErrorAlert_B={showErrorAlert_B}
-                  
                 />
               }
             />
             <Route
               path="/generator_a/:id"
               element={
-                <Generator_A
+                <GeneratorA
                   datas={datas}
                   BASEURL={BASEURL}
                   status={status}
-                  SERVERURL={SERVERURL}
                   setId={setId}
                   fetchStatus={fetchStatus}
                   isOn_A={isOn_A}
@@ -720,11 +660,10 @@ const App = () => {
             <Route
               path="/generator_b/:id"
               element={
-                <Generator_B
+                <GeneratorB
                   datas={datas}
                   BASEURL={BASEURL}
                   status={status}
-                  SERVERURL={SERVERURL}
                   setId={setId}
                   fetchStatus={fetchStatus}
                   isOn_B={isOn_B}
